@@ -31,6 +31,8 @@ export default function StatisticsPage() {
     new Date(2024, 5, 5),
   );
   const [config, setConfig] = useState<any>([]);
+  const [disablePrev, setDisablePrev] = useState<boolean>(true);
+  const [disableNext, setDisableNext] = useState<boolean>(false);
 
   useEffect(() => {
     setStatsData(ridingData);
@@ -115,13 +117,33 @@ export default function StatisticsPage() {
         cardRightValue: "₹-" + 248,
       },
     ]);
-    // const minDate = new Date(
-    //   Math.min(...statsData.map((data) => new Date(data.startDate).getTime())),
-    // );
-    // const maxDate = new Date(
-    //   Math.max(...statsData.map((data) => new Date(data.startDate).getTime())),
-    // );
+
+    const minDate = new Date(
+      Math.min(...statsData.map((data) => new Date(data.startDate).getTime())),
+    );
+    const maxDate = new Date(
+      Math.max(...statsData.map((data) => new Date(data.startDate).getTime())),
+    );
+
+    setDisablePrev(startDate <= minDate);
+    setDisableNext(endDate >= maxDate);
   }, [statsData, currentRangeStart]);
+
+  const handlePrev = () => {
+    setCurrentRangeStart((prev) => {
+      const newDate = new Date(prev);
+      newDate.setDate(prev.getDate() - 7);
+      return newDate;
+    });
+  };
+
+  const handleNext = () => {
+    setCurrentRangeStart((prev) => {
+      const newDate = new Date(prev);
+      newDate.setDate(prev.getDate() + 7);
+      return newDate;
+    });
+  };
   return (
     <div className="space-y-3">
       <header className="bg-[#242424] px-4 py-3 w-full flex flex-col gap-4 ">
@@ -144,18 +166,20 @@ export default function StatisticsPage() {
             id="back-forward-btns"
             className="flex w-[15%] items-center justify-between"
           >
-            <span
-              onClick={() => console.log("prev")}
+            <button
+              onClick={handlePrev}
+              disabled={disablePrev}
               className="cursor-pointer"
             >
               <GrFormPrevious size={25} />
-            </span>
-            <span
-              onClick={() => console.log("next")}
+            </button>
+            <button
+              onClick={handleNext}
+              disabled={disableNext}
               className="cursor-pointer"
             >
               <GrFormNext size={25} />
-            </span>
+            </button>
           </div>
         </div>
       </header>
@@ -180,24 +204,26 @@ export default function StatisticsPage() {
                 style={{
                   border:
                     "1px solid" +
-                    ridingBehaviourRange(Math.floor(accumulatedData.score / 6))
-                      ?.color,
+                    ridingBehaviourRange(
+                      Math.min(Math.floor(accumulatedData.score / 6), 100),
+                    )?.color,
                 }}
               >
                 <span
                   className="w-[35%] py-1 px-3 flex justify-center rounded-s-md"
                   style={{
                     background: ridingBehaviourRange(
-                      Math.floor(accumulatedData.score / 6),
+                      Math.min(Math.floor(accumulatedData.score / 6), 100),
                     )?.color,
                   }}
                 >
-                  {Math.floor(accumulatedData.score / 6)}%
+                  {Math.min(Math.floor(accumulatedData.score / 6), 100)}%
                 </span>
                 <span className="w-[65%] py-1 px-3 flex justify-center">
                   {
-                    ridingBehaviourRange(Math.floor(accumulatedData.score / 6))
-                      ?.message
+                    ridingBehaviourRange(
+                      Math.min(Math.floor(accumulatedData.score / 6), 100),
+                    )?.message
                   }
                 </span>
               </div>
