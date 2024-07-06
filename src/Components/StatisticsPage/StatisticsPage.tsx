@@ -14,8 +14,11 @@ import {
   ridingData,
 } from "../../config.ts";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import StatsDisplayCard from "./StatsDisplayCard.tsx";
+
 export default function StatisticsPage() {
+  const navigate = useNavigate();
   const initialTotals = {
     score: 0,
     distance: 0,
@@ -27,9 +30,15 @@ export default function StatisticsPage() {
   const [statsData, setStatsData] = useState<RidingData[]>([]);
   const [rangedData, setRangedData] = useState<RidingData[]>([]);
   const [accumulatedData, setAccumulatedData] = useState(initialTotals);
-  const [currentRangeStart, setCurrentRangeStart] = useState<Date>(
-    new Date(2024, 5, 5),
-  );
+  const [currentRangeStart, setCurrentRangeStart] = useState<{
+    type: string;
+    startDate: Date;
+    endDate: Date;
+  }>({
+    type: "week",
+    startDate: new Date(2024, 5, 5),
+    endDate: new Date(2024, 5, 11),
+  });
   const [config, setConfig] = useState<any>([]);
   const [disablePrev, setDisablePrev] = useState<boolean>(true);
   const [disableNext, setDisableNext] = useState<boolean>(false);
@@ -39,10 +48,16 @@ export default function StatisticsPage() {
   }, []);
 
   useEffect(() => {
-    statsData.map((data) => console.log(new Date(data.startDate)));
-    const startDate = currentRangeStart;
-    const endDate = new Date(startDate);
-    endDate.setDate(startDate.getDate() + 6);
+    // statsData.map((data) => console.log(new Date(data.startDate)));
+    let startDate = currentRangeStart.startDate;
+    let endDate = currentRangeStart.endDate;
+    if (currentRangeStart.type === "week") {
+      endDate = new Date(startDate);
+      endDate.setDate(startDate.getDate() + 6);
+    } else if (currentRangeStart.type === "month") {
+      startDate = currentRangeStart.startDate;
+      endDate = currentRangeStart.endDate;
+    }
 
     const range = statsData.filter((data) => {
       const date = new Date(data.startDate);
@@ -131,35 +146,38 @@ export default function StatisticsPage() {
 
   const handlePrev = () => {
     setCurrentRangeStart((prev) => {
-      const newDate = new Date(prev);
-      newDate.setDate(prev.getDate() - 7);
-      return newDate;
+      const newDate = new Date(prev.startDate);
+      newDate.setDate(prev.startDate.getDate() - 7);
+      return { ...prev, startDate: newDate };
     });
   };
 
   const handleNext = () => {
     setCurrentRangeStart((prev) => {
-      const newDate = new Date(prev);
-      newDate.setDate(prev.getDate() + 7);
-      return newDate;
+      const newDate = new Date(prev.startDate);
+      newDate.setDate(prev.startDate.getDate() + 7);
+      return { ...prev, startDate: newDate };
     });
   };
   return (
     <div className="space-y-3">
       <header className="bg-[#242424] px-4 py-3 w-full flex flex-col gap-4 ">
         <h1 className="font-semibold px-2">Statistics</h1>
-        <div id="range-section" className="flex py-2">
+        <div id="range-section" className="flex py-2 ">
           <div
             id="range-picker"
-            className="flex items-center px-2 w-[85%] gap-3"
+            className="flex items-center px-2 w-[85%] gap-3 border border-red-100"
+            onClick={() => navigate("range-selection")}
           >
             <BiCalendar />
             <span
               className="font-nunito cursor-pointer"
-              onClick={() => logsole.log("Clicked on range")}
+              onClick={() => navigate("range-selection")}
             >
-              {formatMonthDay(new Date(rangedData[5]?.startDate))} -{" "}
-              {formatMonthDay(new Date(rangedData[0]?.startDate))} (Last Week)
+              {formatMonthDay(
+                new Date(rangedData[rangedData.length - 1]?.startDate),
+              )}{" "}
+              - {formatMonthDay(new Date(rangedData[0]?.startDate))} (Last Week)
             </span>
           </div>
           <div
