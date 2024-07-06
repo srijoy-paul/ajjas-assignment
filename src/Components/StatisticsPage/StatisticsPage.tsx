@@ -7,13 +7,14 @@ import { GoClock } from "react-icons/go";
 import { IoSpeedometerOutline } from "react-icons/io5";
 import {
   RidingData,
+  appDataContext,
   convertMetersToKilometers,
   convertSecondsToHoursAndMinutes,
   formatMonthDay,
   ridingBehaviourRange,
   ridingData,
 } from "../../config.ts";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import StatsDisplayCard from "./StatsDisplayCard.tsx";
 
@@ -27,25 +28,28 @@ export default function StatisticsPage() {
     topSpeed: 0,
   };
 
-  const [statsData, setStatsData] = useState<RidingData[]>([]);
+  const { statsData, currentRangeStart, setCurrentRangeStart } =
+    useContext(appDataContext);
+
+  // const [statsData, setStatsData] = useState<RidingData[]>([]);
   const [rangedData, setRangedData] = useState<RidingData[]>([]);
   const [accumulatedData, setAccumulatedData] = useState(initialTotals);
-  const [currentRangeStart, setCurrentRangeStart] = useState<{
-    type: string;
-    startDate: Date;
-    endDate: Date;
-  }>({
-    type: "week",
-    startDate: new Date(2024, 5, 5),
-    endDate: new Date(2024, 5, 11),
-  });
+  // const [currentRangeStart, setCurrentRangeStart] = useState<{
+  //   type: string;
+  //   startDate: Date;
+  //   endDate: Date;
+  // }>({
+  //   type: "week",
+  //   startDate: new Date(2024, 5, 5),
+  //   endDate: new Date(2024, 5, 11),
+  // });
   const [config, setConfig] = useState<any>([]);
   const [disablePrev, setDisablePrev] = useState<boolean>(true);
   const [disableNext, setDisableNext] = useState<boolean>(false);
 
-  useEffect(() => {
-    setStatsData(ridingData);
-  }, []);
+  // useEffect(() => {
+  //   setStatsData(ridingData);
+  // }, []);
 
   useEffect(() => {
     // statsData.map((data) => console.log(new Date(data.startDate)));

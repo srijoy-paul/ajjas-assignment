@@ -1,3 +1,5 @@
+import { createContext } from "react";
+
 export type RidingData = {
   startDate: number;
   distance: number;
@@ -867,3 +869,24 @@ export function convertSecondsToHoursAndMinutes(durationInSeconds) {
 
   return `${hours}hr${minutes}min`;
 }
+
+export const appDataContext = createContext({
+  statsData: [
+    {
+      startDate: 0,
+      distance: 0,
+      duration: 0,
+      averageSpeed: 0,
+      topSpeed: 0,
+    },
+  ],
+  currentRangeStart: {
+    type: "week",
+    startDate: new Date(2024, 5, 5),
+    endDate: new Date(2024, 5, 11),
+  },
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  setCurrentRangeStart: (newRangeStart: any) => {
+    return { ...newRangeStart };
+  },
+});
