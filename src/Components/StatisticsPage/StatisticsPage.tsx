@@ -52,13 +52,14 @@ export default function StatisticsPage() {
   // }, []);
 
   useEffect(() => {
-    // statsData.map((data) => console.log(new Date(data.startDate)));
+    statsData.map((data) => console.log(new Date(data.startDate)));
     let startDate = currentRangeStart.startDate;
     let endDate = currentRangeStart.endDate;
     if (currentRangeStart.type === "week") {
       endDate = new Date(startDate);
       endDate.setDate(startDate.getDate() + 6);
-    } else if (currentRangeStart.type === "month") {
+    }
+    if (currentRangeStart.type === "month") {
       startDate = currentRangeStart.startDate;
       endDate = currentRangeStart.endDate;
     }
@@ -263,7 +264,7 @@ export default function StatisticsPage() {
           </div>
         </div>
         {config.map((cardData) => {
-          return <StatsDisplayCard data={cardData} />;
+          return <StatsDisplayCard key={cardData.cardName} data={cardData} />;
         })}
       </main>
     </div>

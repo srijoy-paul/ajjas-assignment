@@ -835,10 +835,48 @@ export const cards = [
   },
 ];
 
-export const formatMonthDay = (dateString: string): string => {
+export function formatMonthDay(dateString: string): string {
   const date = new Date(dateString);
   return date.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-};
+}
+export function formatMonthDay2(dateString: Date): string {
+  return dateString.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
+}
+export function formatDayMonth(date: Date) {
+  const days = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+
+  const dayName = days[date.getDay()];
+  const monthName = months[date.getMonth()];
+  const day = date.getDate();
+
+  return `${dayName}, ${monthName} ${day}`;
+}
 
 export const ridingBehaviourRange = (percent: number) => {
   if (percent >= 0 && percent <= 40)
@@ -890,3 +928,5 @@ export const appDataContext = createContext({
     return { ...newRangeStart };
   },
 });
+
+export const rangeCategory = ["day", "week", "month", "other"];
